@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Hydration Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-teal: #10a3b2;
+        --light-teal: #00d2df;
+        --bg-gradient: linear-gradient(180deg, #eaf8f8 0%, #d8f5f3 100%);
+        --card-bg: #ffffff;
+        --text-dark: #123038;
+        --text-sub: #57757d;
+        --border-light: #e0f2f1;
+        --soft-mint: #eefbfb;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #1e1e1e;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        padding: 20px 10px;
+      }
+
+      /* Phone mockup frame */
+      .phone-frame {
+        width: 100%;
+        max-width: none;
+        min-height: 100vh;
+        height: 100dvh;
+        background-color: var(--card-bg);
+        border-radius: 0;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: relative;
+        border: none;
+        box-sizing: border-box;
+      }
+
+      .notch {
+        width: 90px;
+        height: 24px;
+        background-color: #000000;
+        border-radius: 12px;
+        margin: 10px auto 0 auto;
+        z-index: 50;
+        flex-shrink: 0;
+      }
+
+      .views-wrapper {
+        flex: 1;
+        overflow-y: auto;
+        position: relative;
+        background: var(--bg-gradient);
+      }
+
+      .view {
+        display: none;
+        padding: 20px 22px 30px 22px;
+        flex-direction: column;
+      }
+
+      .view.active {
+        display: flex;
+      }
+
+      h1.serif-heading {
+        font-family: "DM Serif Display", serif;
+        font-size: 30px;
+        color: var(--text-dark);
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+      }
+
+      h1.serif-heading em {
+        font-style: italic;
+        color: var(--primary-teal);
+        font-weight: 400;
+      }
+
+      .sub-text {
+        font-size: 13px;
+        color: var(--text-sub);
+        line-height: 1.5;
+        margin-top: 8px;
+      }
+
+      /* Mascot Banner Section */
+      .mascot-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 18px;
+        margin-bottom: 18px;
+        position: relative;
+        gap: 10px;
+      }
+
+      .speech-bubble {
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        border-radius: 18px;
+        padding: 14px 16px;
+        flex: 1;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+      }
+
+      .speech-bubble h3 {
+        font-family: "DM Serif Display", serif;
+        font-size: 17px;
+        color: var(--primary-teal);
+        margin-bottom: 4px;
+      }
+
+      .speech-bubble p {
+        font-size: 11px;
+        color: var(--text-sub);
+        line-height: 1.4;
+      }
+
+      .heidi-mascot-container {
+        width: 85px;
+        display: flex;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      /* Progress Card */
+      .progress-card {
+        background-color: var(--card-bg);
+        border-radius: 28px;
+        padding: 22px 20px;
+        box-shadow: 0 10px 25px rgba(0, 163, 178, 0.06);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .card-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        color: #8da4a9;
+        text-transform: uppercase;
+      }
+
+      .date-badge {
+        background-color: #e6f7f8;
+        color: var(--primary-teal);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 12px;
+      }
+
+      .card-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 24px;
+        color: var(--text-dark);
+        width: 100%;
+        margin-bottom: 15px;
+      }
+
+      /* Ring Tracker */
+      .ring-container {
+        position: relative;
+        width: 170px;
+        height: 170px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 0 20px 0;
+      }
+
+      .ring-svg {
+        transform: rotate(-90deg);
+        width: 100%;
+        height: 100%;
+      }
+
+      .ring-bg {
+        fill: none;
+        stroke: #e2f6f8;
+        stroke-width: 10;
+      }
+
+      .ring-progress {
+        fill: none;
+        stroke: var(--primary-teal);
+        stroke-width: 10;
+        stroke-linecap: round;
+        stroke-dasharray: 440;
+        stroke-dashoffset: 440;
+        transition: stroke-dashoffset 0.5s ease-in-out;
+      }
+
+      .ring-text {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .consumed-value {
+        font-family: "DM Serif Display", serif;
+        font-size: 32px;
+        color: var(--text-dark);
+        line-height: 1;
+      }
+
+      .consumed-unit {
+        font-size: 14px;
+        color: var(--primary-teal);
+        font-weight: 600;
+        margin-left: 2px;
+      }
+
+      .target-subtext {
+        font-size: 9px;
+        color: #8da4a9;
+        margin-top: 4px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        line-height: 1.3;
+      }
+
+      .progress-status {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--primary-teal);
+        margin-top: 5px;
+      }
+
+      .quick-add-title {
+        width: 100%;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #8da4a9;
+        margin-top: 18px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+      }
+
+      .quick-add-bar {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .quick-btn {
+        flex: 1;
+        padding: 10px;
+        background-color: var(--soft-mint);
+        border: 1px solid #d0f0f2;
+        border-radius: 14px;
+        color: var(--primary-teal);
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .quick-btn:active {
+        transform: scale(0.96);
+        background-color: #c9f3f5;
+      }
+
+      .btn-teal {
+        width: 100%;
+        padding: 14px;
+        background-color: var(--primary-teal);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 15px;
+        box-shadow: 0 4px 12px rgba(16, 163, 178, 0.2);
+        transition: background 0.2s;
+      }
+
+      .btn-teal:hover {
+        background-color: #0d8a97;
+      }
+
+      .btn-outline {
+        width: 100%;
+        padding: 12px;
+        background-color: transparent;
+        color: #d9534f;
+        border: 1px solid #f5c6cb;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 12px;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 6px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid var(--border-light);
+        border-radius: 12px;
+        font-size: 14px;
+        outline: none;
+        background-color: #fafafa;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-teal);
+        background-color: #fff;
+      }
+
+      /* Reminder Countdown Banner */
+      .reminder-top-pill {
+        display: inline-block;
+        background-color: #123038;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 20px;
+        margin-bottom: 15px;
+      }
+
+      .countdown-text {
+        color: var(--primary-teal);
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: -4px;
+        margin-bottom: 12px;
+      }
+
+      /* Bottom Nav */
+      .nav-bar {
+        height: 65px;
+        background-color: #ffffff;
+        border-top: 1px solid #eef2f3;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding-bottom: 5px;
+        flex-shrink: 0;
+      }
+
+      .nav-btn {
+        background: none;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #a0b2b6;
+        font-size: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        gap: 3px;
+        width: 25%;
+      }
+
+      .nav-btn.active {
+        color: var(--primary-teal);
+      }
+
+      .nav-btn svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+
+      .toast {
+        position: absolute;
+        top: 45px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-60px);
+        background-color: var(--text-dark);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0;
+        transition: all 0.3s;
+        pointer-events: none;
+        z-index: 100;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      .log-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #edf4f5;
+        font-size: 13px;
+        color: var(--text-dark);
+      }
+
+      /* Comic-style loading screen */
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background: #10a3b2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        overflow: hidden;
+        transition:
+          opacity 0.6s ease,
+          visibility 0.6s ease;
+      }
+
+      #loading-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loading-comic {
+        width: min(340px, 85vw);
+        text-align: center;
+        position: relative;
+        animation: comicPop 0.7s cubic-bezier(0.2, 1.5, 0.4, 1);
+      }
+
+      .loading-burst {
+        position: absolute;
+        inset: -35px;
+        background: #ffe66d;
+        clip-path: polygon(
+          50% 0%,
+          58% 15%,
+          70% 4%,
+          75% 20%,
+          91% 10%,
+          87% 28%,
+          100% 30%,
+          86% 43%,
+          100% 50%,
+          86% 57%,
+          96% 72%,
+          80% 73%,
+          86% 91%,
+          70% 82%,
+          62% 100%,
+          50% 85%,
+          38% 100%,
+          30% 82%,
+          14% 91%,
+          20% 73%,
+          4% 72%,
+          14% 57%,
+          0% 50%,
+          14% 43%,
+          0% 30%,
+          13% 28%,
+          9% 10%,
+          25% 20%,
+          30% 4%,
+          42% 15%
+        );
+        z-index: -1;
+        animation: spinBurst 5s linear infinite;
+      }
+
+      .loading-title {
+        display: inline-block;
+        background: #ffffff;
+        color: #123038;
+        padding: 16px 22px 13px;
+        border: 5px solid #123038;
+        border-radius: 18px;
+        font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+        font-size: clamp(32px, 9vw, 48px);
+        line-height: 1;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transform: rotate(-3deg);
+        text-shadow: 2px 2px 0 #ffe66d;
+        box-shadow: 7px 7px 0 #123038;
+      }
+
+      .loading-drop {
+        font-size: 48px;
+        display: block;
+        margin-bottom: 10px;
+        animation: bounceDrop 0.9s ease-in-out infinite alternate;
+      }
+
+      .loading-dots {
+        margin-top: 30px;
+        color: #123038;
+        font-family: "Arial Black", sans-serif;
+        font-size: 15px;
+        letter-spacing: 3px;
+      }
+
+      .loading-dots span {
+        display: inline-block;
+        animation: dotPop 1.2s infinite;
+      }
+
+      .loading-dots span:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .loading-dots span:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes comicPop {
+        0% {
+          transform: scale(0.3) rotate(8deg);
+          opacity: 0;
+        }
+        70% {
+          transform: scale(1.08) rotate(-3deg);
+        }
+        100% {
+          transform: scale(1) rotate(-3deg);
+          opacity: 1;
+        }
+      }
+
+      @keyframes spinBurst {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes bounceDrop {
+        from {
+          transform: translateY(0) rotate(-5deg);
+        }
+        to {
+          transform: translateY(-9px) rotate(5deg);
+        }
+      }
+
+      @keyframes dotPop {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.35;
+        }
+        30% {
+          transform: translateY(-7px);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Comic-style startup loading screen -->
+    <div id="loading-screen">
+      <div class="loading-comic">
+        <div class="loading-burst"></div>
+        <span class="loading-drop">💧</span>
+        <div class="loading-title">Hydro<br />Reminder</div>
+        <div class="loading-dots">
+          LOADING<span>.</span><span>.</span><span>.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-frame">
+      <div class="notch"></div>
+      <div id="toast" class="toast">Added water!</div>
+
+      <div class="views-wrapper">
+        <!-- 1. HOME VIEW -->
+        <div id="view-home" class="view active">
+          <h1 class="serif-heading">
+            Stay refreshed,<br />feel your <em>best.</em>
+          </h1>
+          <p class="sub-text">
+            Heidi is here to help you build a simple, happy hydration habit —
+            one glass at a time.
+          </p>
+
+          <!-- Mascot Header Section -->
+          <div class="mascot-section">
+            <div class="speech-bubble">
+              <h3 id="bubble-title">Stay hydrated!</h3>
+              <p id="bubble-text">
+                Let's work together to hit your 2,000ml goal today.
+              </p>
+            </div>
+
+            <div class="heidi-mascot-container">
+              <svg width="85" height="100" viewBox="0 0 100 120" fill="none">
+                <rect
+                  x="22"
+                  y="32"
+                  width="56"
+                  height="68"
+                  rx="28"
+                  fill="#10A3B2"
+                />
+                <rect
+                  x="22"
+                  y="32"
+                  width="56"
+                  height="42"
+                  rx="20"
+                  fill="#a0f2f7"
+                />
+                <path
+                  d="M22 60 C35 65, 65 55, 78 60 L78 72 C78 87.3553 65.3553 100 50 100 C34.6447 100 22 87.3553 22 72 Z"
+                  fill="#10A3B2"
+                />
+                <rect
+                  x="36"
+                  y="22"
+                  width="28"
+                  height="10"
+                  rx="4"
+                  fill="#0d8a97"
+                />
+                <circle cx="68" cy="34" r="5" fill="#ff7675" />
+                <circle cx="76" cy="31" r="5" fill="#ff7675" />
+                <circle cx="72" cy="32.5" r="3" fill="#ffeaa7" />
+                <circle cx="38" cy="48" r="3" fill="#123038" />
+                <circle cx="62" cy="48" r="3" fill="#123038" />
+                <circle cx="39" cy="47" r="1" fill="#FFF" />
+                <circle cx="63" cy="47" r="1" fill="#FFF" />
+                <path
+                  d="M44 54 Q50 59 56 54"
+                  stroke="#123038"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+                <circle cx="33" cy="52" r="2.5" fill="#ff7675" opacity="0.6" />
+                <circle cx="67" cy="52" r="2.5" fill="#ff7675" opacity="0.6" />
+                <path
+                  d="M22 55 Q12 55 14 68"
+                  stroke="#123038"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+                <path
+                  d="M78 55 Q88 55 86 68"
+                  stroke="#123038"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+                <path
+                  d="M40 100 L40 108"
+                  stroke="#123038"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M60 100 L60 108"
+                  stroke="#123038"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Daily Progress Card -->
+          <div class="progress-card">
+            <div class="card-header">
+              <span class="card-label">Today's Progress</span>
+              <span class="date-badge" id="current-date">Oct 5</span>
+            </div>
+
+            <div class="card-title">Keep it flowing</div>
+
+            <div class="ring-container">
+              <svg class="ring-svg" viewBox="0 0 160 160">
+                <circle class="ring-bg" cx="80" cy="80" r="70" />
+                <circle
+                  id="ring-progress-bar"
+                  class="ring-progress"
+                  cx="80"
+                  cy="80"
+                  r="70"
+                />
+              </svg>
+              <div class="ring-text">
+                <div>
+                  <span id="display-consumed" class="consumed-value">0</span>
+                  <span class="consumed-unit">ml</span>
+                </div>
+                <span class="target-subtext"
+                  >of <span id="display-goal">2,000</span> ml<br />DAILY DRINK
+                  TARGET</span
+                >
+              </div>
+            </div>
+
+            <div class="progress-status">
+              <span id="display-percent">0% complete</span>
+              <span id="display-status-text">In progress</span>
+            </div>
+
+            <span class="quick-add-title">Quick Add</span>
+            <div class="quick-add-bar">
+              <button class="quick-btn" onclick="addWater(250)">+250ml</button>
+              <button class="quick-btn" onclick="addWater(350)">+350ml</button>
+              <button class="quick-btn" onclick="addWater(500)">+500ml</button>
+            </div>
+
+            <button class="btn-outline" onclick="resetProgress()">
+              Reset Progress
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. PROGRESS LOG VIEW -->
+        <div id="view-progress" class="view">
+          <h1 class="serif-heading">Hydration Log</h1>
+          <p class="sub-text">Every drop counts towards your goal!</p>
+          <div
+            class="progress-card"
+            style="margin-top: 20px; align-items: stretch"
+          >
+            <div id="log-list"></div>
+          </div>
+        </div>
+
+        <!-- 3. REMINDER VIEW WITH COUNTDOWN -->
+        <div id="view-reminder" class="view">
+          <div style="text-align: center">
+            <span id="reminder-top-status" class="reminder-top-pill"
+              >🔔 Reminders OFF</span
+            >
+          </div>
+
+          <h1 class="serif-heading">Reminders</h1>
+          <p class="sub-text">Heidi will gently remind you to take a drink.</p>
+
+          <div class="progress-card" style="margin-top: 20px">
+            <p style="font-size: 13px; color: var(--text-sub)">
+              Reminder Frequency:
+            </p>
+            <h2
+              style="
+                font-family: &quot;DM Serif Display&quot;, serif;
+                color: var(--primary-teal);
+                font-size: 28px;
+                margin: 8px 0 6px 0;
+              "
+            >
+              Every <span id="display-interval">30</span> minutes
+            </h2>
+
+            <!-- Countdown Display Line from Screenshot -->
+            <div id="countdown-display" class="countdown-text">
+              Next reminder in: 30:00
+            </div>
+
+            <button class="btn-teal" onclick="enableReminders()">
+              🔔 Enable Reminder Sound
+            </button>
+            <button class="btn-outline" onclick="disableReminders()">
+              🔕 Disable Reminder Sound
+            </button>
+            <button class="btn-teal" onclick="testNotification()">
+              🔊 Test Reminder Sound
+            </button>
+
+            <p
+              id="reminder-status"
+              style="
+                font-size: 11px;
+                color: var(--text-sub);
+                margin-top: 12px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+              "
+            >
+              <span>⚪</span> Reminder sound is OFF
+            </p>
+          </div>
+        </div>
+
+        <!-- 4. SETTINGS VIEW -->
+        <div id="view-settings" class="view">
+          <h1 class="serif-heading">Settings</h1>
+          <p class="sub-text">Personalize your goal and preferences.</p>
+          <div
+            class="progress-card"
+            style="margin-top: 20px; align-items: stretch"
+          >
+            <form onsubmit="saveSettings(event)">
+              <div class="form-group">
+                <label for="input-userName">Your Name</label>
+                <input
+                  type="text"
+                  id="input-userName"
+                  class="form-control"
+                  value="Heidi"
+                />
+              </div>
+              <div class="form-group">
+                <label for="input-waterGoal">Daily Water Goal (ml)</label>
+                <input
+                  type="number"
+                  id="input-waterGoal"
+                  class="form-control"
+                  value="2000"
+                  min="100"
+                  step="50"
+                />
+              </div>
+              <div class="form-group">
+                <label for="input-reminderInterval"
+                  >Reminder Interval (mins)</label
+                >
+                <input
+                  type="number"
+                  id="input-reminderInterval"
+                  class="form-control"
+                  value="30"
+                  min="1"
+                  step="1"
+                />
+              </div>
+              <button type="submit" class="btn-teal">Save Settings</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <nav class="nav-bar">
+        <button class="nav-btn active" onclick="switchTab('home')">
+          <svg viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          </svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('progress')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"
+            />
+          </svg>
+          <span>Progress</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('reminder')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
+            />
+          </svg>
+          <span>Reminder</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('settings')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6z"
+            />
+          </svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+    </div>
+
+    <script>
+      let state = {
+        userName: "Heidi",
+        waterGoal: 2000,
+        reminderInterval: 30,
+        consumedWater: 0,
+        logs: [],
+      };
+
+      let reminderTimer = null;
+      let countdownTimer = null;
+      let remainingSeconds = 0;
+      let audioContext = null;
+      let remindersEnabled = false;
+      let loadingSoundTimer = null;
+      let loadingSoundStarted = false;
+
+      function createLoadingAudioContext() {
+        if (!audioContext) {
+          audioContext = new (
+            window.AudioContext || window.webkitAudioContext
+          )();
+        }
+        if (audioContext.state === "suspended") {
+          audioContext.resume().catch(() => {});
+        }
+      }
+
+      function playWaterDropSound() {
+        try {
+          createLoadingAudioContext();
+          if (!audioContext || audioContext.state !== "running") return false;
+
+          const now = audioContext.currentTime;
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+
+          oscillator.type = "sine";
+          oscillator.frequency.setValueAtTime(950, now);
+          oscillator.frequency.exponentialRampToValueAtTime(420, now + 0.16);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(0.24, now + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now);
+          oscillator.stop(now + 0.21);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function startLoadingSound() {
+        if (loadingSoundStarted) return;
+        createLoadingAudioContext();
+        if (audioContext && audioContext.state === "running") {
+          loadingSoundStarted = true;
+          playWaterDropSound();
+          loadingSoundTimer = setInterval(playWaterDropSound, 1800);
+        }
+      }
+
+      document.addEventListener("pointerdown", startLoadingSound, {
+        once: true,
+      });
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const now = new Date();
+        document.getElementById("current-date").textContent =
+          now.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+        const saved = localStorage.getItem("heidi_state");
+        if (saved) {
+          try {
+            state = { ...state, ...JSON.parse(saved) };
+          } catch (e) {}
+        }
+
+        updateFormInputs();
+        renderUI();
+        updateCountdownDisplay(state.reminderInterval * 60);
+
+        startLoadingSound();
+        setTimeout(() => {
+          document.getElementById("loading-screen").classList.add("hidden");
+          clearInterval(loadingSoundTimer);
+        }, 2500);
+      });
+
+      function switchTab(tabName) {
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("active"));
+        document.getElementById(`view-${tabName}`).classList.add("active");
+
+        const tabs = ["home", "progress", "reminder", "settings"];
+        document.querySelectorAll(".nav-btn").forEach((btn, idx) => {
+          if (tabs[idx] === tabName) btn.classList.add("active");
+          else btn.classList.remove("active");
+        });
+      }
+
+      function addWater(amount) {
+        state.consumedWater += amount;
+        const time = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        state.logs.unshift({ amount, time });
+
+        saveState();
+        renderUI();
+        showToast(`+${amount}ml added!`);
+      }
+
+      function resetProgress() {
+        state.consumedWater = 0;
+        state.logs = [];
+        saveState();
+        renderUI();
+        showToast("Progress reset!");
+      }
+
+      function saveSettings(e) {
+        e.preventDefault();
+        state.userName = document.getElementById("input-userName").value;
+        state.waterGoal = parseInt(
+          document.getElementById("input-waterGoal").value,
+          10,
+        );
+        state.reminderInterval = parseInt(
+          document.getElementById("input-reminderInterval").value,
+          10,
+        );
+
+        saveState();
+        renderUI();
+
+        if (remindersEnabled) {
+          enableReminders();
+        } else {
+          updateCountdownDisplay(state.reminderInterval * 60);
+        }
+
+        showToast("Settings updated!");
+        switchTab("home");
+      }
+
+      function createAudioContext() {
+        if (!audioContext) {
+          audioContext = new (
+            window.AudioContext || window.webkitAudioContext
+          )();
+        }
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+      }
+
+      const REMINDER_SOUND_SRC =
+        "It's%20Time%20To%20Drink%20Water%20Sound%20Effect.mp3";
+      let reminderAudio = null;
+
+      function playReminderSound() {
+        try {
+          if (!reminderAudio) {
+            reminderAudio = new Audio(REMINDER_SOUND_SRC);
+            reminderAudio.preload = "auto";
+          }
+          reminderAudio.currentTime = 0;
+          const playPromise = reminderAudio.play();
+          if (playPromise && typeof playPromise.catch === "function") {
+            playPromise.catch((e) =>
+              console.log("Audio playback was blocked or failed:", e),
+            );
+          }
+        } catch (e) {
+          console.log("Audio playback failed:", e);
+        }
+      }
+
+      function updateCountdownDisplay(overrideSeconds) {
+        const secs =
+          overrideSeconds !== undefined ? overrideSeconds : remainingSeconds;
+        const mins = Math.floor(secs / 60);
+        const displaySecs = secs % 60;
+
+        const formatted = `${String(mins).padStart(2, "0")}:${String(displaySecs).padStart(2, "0")}`;
+        const countdownEl = document.getElementById("countdown-display");
+
+        if (countdownEl) {
+          countdownEl.textContent = `Next reminder in: ${formatted}`;
+        }
+      }
+
+      function startCountdown() {
+        clearInterval(countdownTimer);
+        remainingSeconds = (Number(state.reminderInterval) || 30) * 60;
+        updateCountdownDisplay();
+
+        countdownTimer = setInterval(() => {
+          remainingSeconds--;
+          if (remainingSeconds <= 0) {
+            remainingSeconds = (Number(state.reminderInterval) || 30) * 60;
+          }
+          updateCountdownDisplay();
+        }, 1000);
+      }
+
+      function fireReminder() {
+        playReminderSound();
+        showToast(`💧 Drink water, ${state.userName}!`);
+        document.getElementById("reminder-status").innerHTML =
+          `<span>🟢</span> Sound ON — every ${state.reminderInterval} minutes`;
+      }
+
+      function enableReminders() {
+        createAudioContext();
+
+        clearInterval(reminderTimer);
+
+        const minutes = Math.max(1, Number(state.reminderInterval) || 30);
+        const milliseconds = minutes * 60 * 1000;
+
+        reminderTimer = setInterval(fireReminder, milliseconds);
+        remindersEnabled = true;
+
+        startCountdown();
+
+        const statusText = `Reminders ON every ${minutes} minutes`;
+        document.getElementById("reminder-top-status").textContent =
+          `🔔 ${statusText}`;
+        document.getElementById("reminder-status").innerHTML =
+          `<span>🟢</span> Sound ON — every ${minutes} minutes`;
+
+        showToast(`🔔 Reminders ON every ${minutes} minutes`);
+        playReminderSound();
+      }
+
+      function disableReminders() {
+        clearInterval(reminderTimer);
+        clearInterval(countdownTimer);
+        reminderTimer = null;
+        countdownTimer = null;
+        remainingSeconds = 0;
+        remindersEnabled = false;
+
+        if (reminderAudio) {
+          reminderAudio.pause();
+          reminderAudio.currentTime = 0;
+        }
+
+        updateCountdownDisplay((Number(state.reminderInterval) || 30) * 60);
+
+        document.getElementById("reminder-top-status").textContent =
+          "🔕 Reminders OFF";
+        document.getElementById("reminder-status").innerHTML =
+          "<span>⚪</span> Reminder sound is OFF";
+
+        showToast("🔕 Reminder sound disabled");
+      }
+
+      function testNotification() {
+        createAudioContext();
+        playReminderSound();
+        showToast(`💧 Drink water, ${state.userName}!`);
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      function saveState() {
+        localStorage.setItem("heidi_state", JSON.stringify(state));
+      }
+
+      function updateFormInputs() {
+        document.getElementById("input-userName").value = state.userName;
+        document.getElementById("input-waterGoal").value = state.waterGoal;
+        document.getElementById("input-reminderInterval").value =
+          state.reminderInterval;
+      }
+
+      function renderUI() {
+        document.getElementById("display-consumed").textContent =
+          state.consumedWater.toLocaleString();
+        document.getElementById("display-goal").textContent =
+          state.waterGoal.toLocaleString();
+        document.getElementById("display-interval").textContent =
+          state.reminderInterval;
+
+        const percent = Math.min(
+          Math.round((state.consumedWater / state.waterGoal) * 100),
+          100,
+        );
+        document.getElementById("display-percent").textContent =
+          `${percent}% complete`;
+
+        const circumference = 440;
+        const offset = circumference - (percent / 100) * circumference;
+        document.getElementById("ring-progress-bar").style.strokeDashoffset =
+          offset;
+
+        const bTitle = document.getElementById("bubble-title");
+        const bText = document.getElementById("bubble-text");
+        const sText = document.getElementById("display-status-text");
+
+        if (percent >= 100) {
+          bTitle.textContent = "We did it!";
+          bText.textContent = `You reached your goal! Heidi is so proud of you.`;
+          sText.textContent = "Goal complete";
+        } else if (percent > 50) {
+          bTitle.textContent = "Halfway there!";
+          bText.textContent = "Keep going, you are doing fantastic today!";
+          sText.textContent = "In progress";
+        } else {
+          bTitle.textContent = "Stay hydrated!";
+          bText.textContent = `Let's work together to hit your ${state.waterGoal.toLocaleString()}ml goal today.`;
+          sText.textContent = "In progress";
+        }
+
+        const logList = document.getElementById("log-list");
+        if (state.logs.length === 0) {
+          logList.innerHTML = `<p style="text-align: center; color: var(--text-sub); font-size: 12px; padding: 15px 0;">No logs yet today.</p>`;
+        } else {
+          logList.innerHTML = state.logs
+            .map(
+              (l) => `
+                    <div class="log-item">
+                        <span>💧 Logged <strong>${l.amount} ml</strong></span>
+                        <span style="color: var(--text-sub);">${l.time}</span>
+                    </div>
+                `,
+            )
+            .join("");
+        }
+      }
+    </script>
+  </body>
+</html>
